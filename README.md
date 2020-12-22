@@ -1,1 +1,1 @@
-# lansat_NDWI
+# landsat_NDWI
