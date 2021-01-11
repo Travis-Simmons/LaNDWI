@@ -1,1 +1,2 @@
-# landsat_NDWI
+# LaNDWI
+Need to dockerize and rename
