@@ -126,18 +126,30 @@ def main():
                     img = gdal.Open(im)
 
 
-                    gdal.Translate(outdir + '\\' + filename, img, projWin = [x1,y1,x2,y2])
+                    gdal.Translate(os.path.join(outdir, filename), img, projWin = [x1,y1,x2,y2])
 
     lv2 = glob.glob(indir + '\*')
 
-    if not os.path.exists(indir + '\cloudy'):
-            os.makedirs(indir + '\cloudy')
+    # if not os.path.exists(indir + '\cloudy'):
+    #         os.makedirs(indir + '\cloudy')
 
-    if not os.path.exists(indir + '\clear'):
-            os.makedirs(indir + '\clear')
+    # if not os.path.exists(indir + '\clear'):
+    #         os.makedirs(indir + '\clear')
             
-    if not os.path.exists(indir + r'\NDWI'):
-            os.makedirs(indir + r'\NDWI')
+    # if not os.path.exists(indir + r'\NDWI'):
+    #         os.makedirs(indir + r'\NDWI')
+
+    os.path.join(indir, 'cloudy')
+
+
+    if not os.path.exists(os.path.join(indir, 'cloudy')):
+            os.makedirs(os.path.join(indir, 'cloudy'))
+
+    if not os.path.exists(os.path.join(indir, 'cloudy')):
+            os.makedirs(os.path.join(indir, 'cloudy'))
+            
+    if not os.path.exists(os.path.join(indir, 'cloudy')):
+            os.makedirs(os.path.join(indir, 'cloudy'))
             
     for date_folder in lv2:
 
@@ -146,7 +158,7 @@ def main():
             
             
             if not date.startswith('L'):
-                band1_imgs = glob.glob(date_folder + '\*B1.tif')      
+                band1_imgs = glob.glob(os.path.join(date_folder, '*B1.tif')      
 
                 for img in band1_imgs:
                     filename = img.split("\\")[-1]
@@ -168,7 +180,9 @@ def main():
                         print("Cloudy image")
 
                         print(date)
-                        shutil.move(indir + '\\' +  date, indir + '\cloudy')
+                        # shutil.move(indir + '\\' +  date, indir + '\cloudy')
+
+                        shutil.move(os.path.join(indir, date),os.path.join(indir, 'cloudy'))
 
                     else:
                         print("Clear image")
@@ -180,8 +194,9 @@ def main():
                         # Calculation
                         # NDWI = (3 - 5)/(3 + 5)
                         date_folder
-                        band3 = glob.glob(date_folder + '\*B3.tif')
-                        band5 = glob.glob(date_folder + '\*B5.tif')
+                        band3 = glob.glob(os.path.join(date_folder, '*B3.tif'))
+                        # band5 = glob.glob(date_folder + '*B5.tif')
+                        band5 = glob.glob(os.path.join(date_folder, '*B5.tif')
                         b3 = rio.open(band3[0])
                         b5 = rio.open(band5[0])
                         green = b3.read()
@@ -194,17 +209,17 @@ def main():
                         # Plotting
                         fig, ax = plt.subplots(1, figsize=(12, 10))
                         show(ndwi, ax=ax, cmap="coolwarm_r")
-                        plt.savefig(date_folder + '\\' + date + '_NDWI.tif')
-                        plt.savefig(indir + '\\NDWI\\' + date + '_NDWI.tif')
+                        plt.savefig(os.path.join(date_folder, date + '_NDWI.tif'))
+                        plt.savefig(os.path.join(indir, 'NDWI', date + '_NDWI.tif'))
                         
                         b3.close()
                         b5.close()
 
 
-                        shutil.move(indir + '\\' +  date, indir + '\clear')
+                        shutil.move(os.path.join(indir, date), os.path.join(indir, 'clear'))
 
 
-    ndwi_tifs = glob.glob(os.join(indir, r'\NDWI\*.tif'))
+    ndwi_tifs = glob.glob(os.join(indir, 'NDWI\*.tif'))
 
     for i in ndwi_tifs:
         pic_name = i.split('.')[-2]
@@ -216,7 +231,7 @@ def main():
 
         
     clip = ImageSequenceClip(ndwi_tifs,fps=.25)
-    clip.write_gif(os.join(indir, r'\NDWI\final.gif'))
+    clip.write_gif(os.join(indir, 'NDWI\final.gif'))
 
 
 
