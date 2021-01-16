@@ -8,7 +8,24 @@ Purpose: Automatically process Landsat 8 NDWI analysis
 import argparse
 import os
 import sys
+import cv2
+from PIL import Image
+import numpy as np
+from cv2 import imread
+from matplotlib import cm
+import tifffile as tiff
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import glob
+import random
+import tarfile
+import gdal
 
+import shutil
+import statistics
+import rasterio as rio
+from rasterio.plot import show
+from moviepy.editor import ImageSequenceClip
 
 # --------------------------------------------------
 def get_args():
@@ -158,7 +175,8 @@ def main():
             
             
             if not date.startswith('L'):
-                band1_imgs = glob.glob(os.path.join(date_folder, '*B1.tif')      
+                band1_imgs = glob.glob(os.path.join(date_folder, '*B1.tif'))
+                print(len(band1_imgs))      
 
                 for img in band1_imgs:
                     filename = img.split("\\")[-1]
@@ -196,7 +214,7 @@ def main():
                         date_folder
                         band3 = glob.glob(os.path.join(date_folder, '*B3.tif'))
                         # band5 = glob.glob(date_folder + '*B5.tif')
-                        band5 = glob.glob(os.path.join(date_folder, '*B5.tif')
+                        band5 = glob.glob(os.path.join(date_folder, '*B5.tif'))
                         b3 = rio.open(band3[0])
                         b5 = rio.open(band5[0])
                         green = b3.read()
