@@ -6,7 +6,7 @@ COPY . /opt
 USER root
 
 RUN apt-get update
-RUN apt-get install -y python3.6-dev \
+RUN apt-get install -y python-dev \
                        python3-pip \
                        wget \
                        build-essential \
@@ -14,8 +14,7 @@ RUN apt-get install -y python3.6-dev \
                        apt-utils \
                        ffmpeg \
                        libsm6 \
-                       libxext6 \
-                       libssl-dev
+                       libxext6
 
 RUN apt-get update
 RUN apt-get install -y libgdal-dev
