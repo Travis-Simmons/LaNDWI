@@ -1,7 +1,7 @@
 opencv-python
 xtarfile[zstd]
 gdal
-shutil
+pytest-shutil
 statistics
 rasterio
 moviepy
