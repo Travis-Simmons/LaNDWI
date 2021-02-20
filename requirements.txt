@@ -1,6 +1,6 @@
 opencv-python
 xtarfile[zstd]
-GDAL
+GDAL == 2.4.0
 pytest-shutil
 statistics
 rasterio
