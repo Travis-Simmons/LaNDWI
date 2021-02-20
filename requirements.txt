@@ -1,5 +1,5 @@
 opencv-python
-tarfile
+xtarfile[zstd]
 gdal
 shutil
 statistics
