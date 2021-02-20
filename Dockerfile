@@ -14,7 +14,8 @@ RUN apt-get install -y python3.6-dev \
                        apt-utils \
                        ffmpeg \
                        libsm6 \
-                       libxext6
+                       libxext6 \
+                       libssl-dev
 
 RUN apt-get update
 RUN apt-get install -y libgdal-dev
