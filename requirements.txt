@@ -1,6 +1,6 @@
 opencv-python
 xtarfile[zstd]
-GDAL == 2.4.0
+GDAL==3.0.4
 pytest-shutil
 rasterio
 moviepy
