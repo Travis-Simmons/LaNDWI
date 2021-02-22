@@ -30,8 +30,7 @@ def get_args():
 
     parser.add_argument('indir',
                         metavar='indir',
-                        help="Directory containing tar'd or foldered lansat data",
-                        required = True)
+                        help="Directory containing tar'd or foldered lansat data")
 
 
 
