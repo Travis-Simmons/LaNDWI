@@ -15,6 +15,7 @@ import gdal
 import shutil
 import statistics
 import rasterio as rio
+import matplotlib.pyplot as plt
 from rasterio.plot import show
 from moviepy.editor import ImageSequenceClip
 
@@ -30,6 +31,7 @@ def get_args():
 
     parser.add_argument('indir',
                         metavar='indir',
+                        type = str,
                         help="Directory containing tar'd or foldered lansat data")
 
 
@@ -73,11 +75,11 @@ def main():
     # y1 = 3467622
     # x2 = 169515
     # y2 = 3462902
-#     bb = args["bounding_box"]
-    x1 = args["bounding_box"][0]
-    x2 = args["bounding_box"][1]
-    y1 = args["bounding_box"][2]
-    y2 = args["bounding_box"][3]
+    bb = args.bounding_box
+    x1 = bb[0]
+    x2 = bb[1]
+    y1 = bb[2]
+    y2 = bb[3]
 
 
 
@@ -88,11 +90,14 @@ def main():
 
 
     # If you ahve tars still in the directory, these will grab them and untar them
-    tars = glob.glob(indir.args + '\*.tar')
+    
+    tars = glob.glob(os.path.join(args.indir ,'*.tar'))
+    print('Extracting tar files...')
 
     # if len(tars) > 1:
     for tar in tars:
         out_file = tar.split('.')[0]
+
 
         # making a file for the tars to land
         if not os.path.exists(out_file):
@@ -103,29 +108,36 @@ def main():
             
     # # Function to take a lansat image and crop it to the sample area in Baker County, GA  
 
-    lv1 = glob.glob(indir.args + '\*')
+    lv1 = glob.glob(os.path.join(args.indir , '*'))
+    # print(lv1)
 
 
+    print('Cropping Lansat Images...')
     for folder in lv1:
+
         if os.path.isdir(folder):
-            folder_name = folder.split('\\')[-1]
+            folder_name = os.path.basename(folder)
+
+
             if folder_name.startswith('L'):
                 cnt = 1
-                tifs = glob.glob(folder+"\*.tif")
-            #     print(folder)
+                # print(os.path.join(folder, '*.TIF'))
+                TIFs = glob.glob(os.path.join(folder, '*.TIF'))
+                # print(TIFs)
 
                 date = folder.split("_")[-4]
-            #     outdir = folder+"\cropped"
-                outdir = indir.args +'\\'+date
+
+                outdir = os.path.join(args.indir, date)
 
                 if os.path.isdir(outdir):
-                    outdir = outdir +f'_{cnt}'
+                    outdir = outdir + f'_{cnt}'
                     cnt += 1
 
                 os.mkdir(outdir)
 
                 # Itterating through the image list
-                for im in tifs:
+                for im in TIFs:
+                    # print(im)
 
                     split = im.split('_')
                     date = split[-6]
@@ -139,31 +151,31 @@ def main():
                     # Opening each one in GDAL
                     img = gdal.Open(im)
 
+                    # print('translating')
+                    gdal.Translate(os.path.join(outdir, filename), img, projWin = [x1,y1,x2,y2])
 
-                    gdal.Translate(outdir + '\\' + filename, img, projWin = [x1,y1,x2,y2])
+    lv2 = glob.glob(os.path.join(args.indir, '*'))
 
-    lv2 = glob.glob(indir.args + '\*')
+    if not os.path.exists(os.path.join(args.indir, 'cloudy')):
+            os.makedirs(os.path.join(args.indir, 'cloudy'))
 
-    if not os.path.exists(indir.args + '\cloudy'):
-            os.makedirs(indir.args + '\cloudy')
-
-    if not os.path.exists(indir.args + '\clear'):
-            os.makedirs(indir.args + '\clear')
+    if not os.path.exists(os.path.join(args.indir, 'clear')):
+            os.makedirs(os.path.join(args.indir, 'clear'))
             
-    if not os.path.exists(indir.args + r'\NDWI'):
-            os.makedirs(indir.args + r'\NDWI')
+    if not os.path.exists(os.path.join(args.indir, 'NDWI')):
+            os.makedirs(os.path.join(args.indir, 'NDWI'))
             
     for date_folder in lv2:
 
         if (os.path.isdir(date_folder)):
-            date = date_folder.split('\\')[-1]
+            date = os.path.basename(date_folder)
             
             
             if not date.startswith('L'):
-                band1_imgs = glob.glob(date_folder + '\*B1.tif')      
+                band1_imgs = glob.glob(os.path.join(date_folder , '*B1.TIF'))      
 
                 for img in band1_imgs:
-                    filename = img.split("\\")[-1]
+                    filename = os.path.basename(img)
     #                     print(img)
     #                     pil_im = Image.open(img)
     #                     display(pil_im)
@@ -178,11 +190,11 @@ def main():
                     if testing_mode == 0.0:
                         print("Black image")
 
-                    if (len([1 for i in testing_vals if i > testing_mode]) >= len(testing_vals)*how_strict.args) or (testing_average > 35) or (testing_average < 10):
+                    if (len([1 for i in testing_vals if i > testing_mode]) >= len(testing_vals)*args.how_strict) or (testing_average > 35) or (testing_average < 10):
                         print("Cloudy image")
 
                         print(date)
-                        shutil.move(indir.args + '\\' +  date, indir.args + '\cloudy')
+                        shutil.move(os.path.join(args.indir, date), os.path.join(args.indir, 'cloudy'))
 
                     else:
                         print("Clear image")
@@ -194,8 +206,8 @@ def main():
                         # Calculation
                         # NDWI = (3 - 5)/(3 + 5)
                         date_folder
-                        band3 = glob.glob(date_folder + '\*B3.tif')
-                        band5 = glob.glob(date_folder + '\*B5.tif')
+                        band3 = glob.glob(os.path.join(date_folder, '*B3.TIF'))
+                        band5 = glob.glob(os.path.join(date_folder, '*B5.TIF'))
                         b3 = rio.open(band3[0])
                         b5 = rio.open(band5[0])
                         green = b3.read()
@@ -208,29 +220,32 @@ def main():
                         # Plotting
                         fig, ax = plt.subplots(1, figsize=(12, 10))
                         show(ndwi, ax=ax, cmap="coolwarm_r")
-                        plt.savefig(date_folder + '\\' + date + '_NDWI.tif')
-                        plt.savefig(indir.args + '\\NDWI\\' + date + '_NDWI.tif')
+                        plt.savefig(os.path.join(date_folder, date + '_NDWI.TIF'))
+                        plt.savefig(os.path.join(args.indir, 'NDWI' , date + '_NDWI.TIF'))
                         
                         b3.close()
                         b5.close()
 
 
-                        shutil.move(indir.args + '\\' +  date, indir.args + '\clear')
+                        shutil.move(os.path.join(args.indir,  date), os.path.join(args.indir, 'clear'))
 
+    ndwi_TIFs = glob.glob(os.path.join(args.indir, 'NDWI', '*.TIF'))
 
-    ndwi_tifs = glob.glob(indir.args + r'\NDWI\*.tif')
-
-    for i in ndwi_tifs:
-        pic_name = i.split('.')[-2]
-        pic_name = pic_name.split('\\')[-1]
+    for i in ndwi_TIFs:
+        print('start',i)
+        pic_name = os.path.basename(i)
+        pic_name = pic_name.replace('.TIF', '')
+        # print('after split', pic_name)
+        # pic_name = pic_name.split('\\')[-1]
+        print('befre writing', pic_name)
         img = cv2.imread(i)
         font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(img,pic_name,(150,525), font, 1,(0,0,0),2)
+        cv2.putText(img,pic_name,(150,230), font, 1,(0,0,0),2)
         cv2.imwrite(i, img)
 
         
-    clip = ImageSequenceClip(ndwi_tifs,fps=.25)
-    clip.write_gif(indir.args + r'\NDWI\final.gif')
+    clip = ImageSequenceClip(ndwi_TIFs,fps=.25)
+    clip.write_gif(os.path.join(args.indir, 'NDWI', 'final.gif'))
 
 
 
