@@ -73,11 +73,11 @@ def main():
     # y1 = 3467622
     # x2 = 169515
     # y2 = 3462902
-    bb = args["bounding_box"]
-    x1 = bb[0]
-    x2 = bb[1]
-    y1 = bb[2]
-    y2 = bb[3]
+#     bb = args["bounding_box"]
+    x1 = args["bounding_box"][0]
+    x2 = args["bounding_box"][1]
+    y1 = args["bounding_box"][2]
+    y2 = args["bounding_box"][3]
 
 
 
