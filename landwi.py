@@ -73,11 +73,11 @@ def main():
     # y1 = 3467622
     # x2 = 169515
     # y2 = 3462902
-    
-    x1 = bounding_box.args[0]
-    x2 = bounding_box.args[1]
-    y1 = bounding_box.args[2]
-    y2 = bounding_box.args[3]
+    bb = bounding_box.args
+    x1 = bb[0]
+    x2 = bb[1]
+    y1 = bb[2]
+    y2 = bb[3]
 
 
 
