@@ -73,20 +73,21 @@ def main():
     # # GPS Bounding Box for sampling area, [xmin, xmax, ymin, fymax]
     
     
-    # xmin ymin  xmax ymax
+    # xmin ymin  xmax ymax - gdal 
+    
+    # xmin ymax xmax ymin
 
     # x1 = 160785
     # y1 = 3467622
     # x2 = 169515
     # y2 = 3462902
+
     bb = args.bounding_box
-    x1 = bb[0]
-    x2 = bb[3]
-    y1 = bb[1]
-    y2 = bb[2]
 
-
-
+    xmin = int(bb[0])
+    ymin = int(bb[1])
+    xmax = int(bb[2])
+    ymax = int(bb[3])
 
     #--------------------------------------------------------------------------
 
@@ -133,7 +134,7 @@ def main():
 
                 outdir = os.path.join(args.indir, date)
 
-                if os.path.isdir(outdir):
+                while os.path.isdir(outdir):
                     outdir = outdir + f'_{cnt}'
                     cnt += 1
 
@@ -162,7 +163,7 @@ def main():
                     # 160894,3459609,173729,3468590
                     # QGIS copy seems to be in xmin ymin xmax ymax
                     # We need to change the input to reflect that for ease of use
-                    gdal.Translate(os.path.join(outdir, filename), img, projWin = [x1,y1,x2,y2])
+                    gdal.Translate(os.path.join(outdir, filename), img, projWin = [xmin, ymax, xmax, ymin])
 
     lv2 = glob.glob(os.path.join(args.indir, '*'))
 
@@ -204,8 +205,10 @@ def main():
                         print("Cloudy image")
 
                         print(date)
-                        shutil.move(os.path.join(args.indir, date), os.path.join(args.indir, 'cloudy'))
-
+                        try:
+                            shutil.move(os.path.join(args.indir, date), os.path.join(args.indir, 'cloudy'))
+                        except:
+                            continue
                     else:
                         print("Clear image")
                         print(date)
@@ -236,8 +239,11 @@ def main():
                         b3.close()
                         b5.close()
 
+                        try:
+                            shutil.move(os.path.join(args.indir,  date), os.path.join(args.indir, 'clear'))
+                        except:
+                            continue
 
-                        shutil.move(os.path.join(args.indir,  date), os.path.join(args.indir, 'clear'))
 
     ndwi_TIFs = glob.glob(os.path.join(args.indir, 'NDWI', '*.TIF'))
 
