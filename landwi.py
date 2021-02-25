@@ -38,9 +38,9 @@ def get_args():
 
     parser.add_argument('-b',
                         '--bounding_box',
-                        help='GPS Bounding Box for sampling area, [xmin, xmax, ymin, ymax]',
+                        help='GPS Bounding Box for sampling area, [xmin, ymin, xmax, ymax]. We recommend leveraging the QGIS plugin "lat lon tools" copy canvas bounding box function. ',
                         metavar='bounding_box',
-                        type= int,
+                        type= float,
                         nargs = '+',
                         required = True
                         )
@@ -71,15 +71,19 @@ def main():
 
 
     # # GPS Bounding Box for sampling area, [xmin, xmax, ymin, fymax]
+    
+    
+    # xmin ymin  xmax ymax
+
     # x1 = 160785
     # y1 = 3467622
     # x2 = 169515
     # y2 = 3462902
     bb = args.bounding_box
     x1 = bb[0]
-    x2 = bb[1]
-    y1 = bb[2]
-    y2 = bb[3]
+    x2 = bb[3]
+    y1 = bb[1]
+    y2 = bb[2]
 
 
 
@@ -152,6 +156,12 @@ def main():
                     img = gdal.Open(im)
 
                     # print('translating')
+                    # Need to add -a_ullr xmin ymax xmax ymin
+
+                    # large extent
+                    # 160894,3459609,173729,3468590
+                    # QGIS copy seems to be in xmin ymin xmax ymax
+                    # We need to change the input to reflect that for ease of use
                     gdal.Translate(os.path.join(outdir, filename), img, projWin = [x1,y1,x2,y2])
 
     lv2 = glob.glob(os.path.join(args.indir, '*'))
@@ -232,12 +242,8 @@ def main():
     ndwi_TIFs = glob.glob(os.path.join(args.indir, 'NDWI', '*.TIF'))
 
     for i in ndwi_TIFs:
-        print('start',i)
         pic_name = os.path.basename(i)
         pic_name = pic_name.replace('.TIF', '')
-        # print('after split', pic_name)
-        # pic_name = pic_name.split('\\')[-1]
-        print('befre writing', pic_name)
         img = cv2.imread(i)
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(img,pic_name,(150,230), font, 1,(0,0,0),2)
