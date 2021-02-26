@@ -115,7 +115,7 @@ def main():
 
     lv1 = glob.glob(os.path.join(args.indir , '*'))
     # print(lv1)
-
+    print(lv1)
 
     print('Cropping Lansat Images...')
     for folder in lv1:
@@ -226,6 +226,7 @@ def main():
                         green = b3.read()
                         nir = b5.read()
                         ndwi = (nir.astype(float)-green.astype(float))/(nir+green)
+                        print(type(ndwi))
 
 
 
@@ -233,6 +234,9 @@ def main():
                         # Plotting
                         fig, ax = plt.subplots(1, figsize=(12, 10))
                         show(ndwi, ax=ax, cmap="coolwarm_r")
+                        # testing
+                        plt.axis('off')
+
                         plt.savefig(os.path.join(date_folder, date + '_NDWI.TIF'), bbox_inches = 'tight')
                         plt.savefig(os.path.join(args.indir, 'NDWI' , date + '_NDWI.TIF'), bbox_inches = 'tight')
                         
@@ -249,15 +253,21 @@ def main():
 
 
     for i in ndwi_TIFs:
-        pic_name = os.path.basename(i)
-        pic_name = pic_name.replace('.TIF', '')
-        img = cv2.imread(i)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(img,pic_name,(150,230), font, 1,(0,0,0),2)
-        cv2.imwrite(i.replace('.TIF', '_labeled.TIF'), img)
+        # Add coordinates
+        img = gdal.Open(i)
+        gdal.Translate(i.replace('.TIF', '_reprojected.TIF'), img, outputBounds = [xmin, ymax, xmax, ymin])
 
-    ndwi_TIFs_labeled = glob.glob(os.path.join(args.indir, 'NDWI', '*labeled.TIF'))
-    clip = ImageSequenceClip(ndwi_TIFs_labeled,fps=.20)
+        # Labeling
+        # pic_name = os.path.basename(i)
+        # pic_name = pic_name.replace('.TIF', '')
+        # img = cv2.imread(i)
+        # height, width, channels = img.shape
+        # font = cv2.FONT_HERSHEY_SIMPLEX
+        # cv2.putText(img,pic_name,(int(width/2),height, font, 1,(0,0,0),2))
+        # cv2.imwrite(i.replace('.TIF', '_labeled.TIF'), img)
+
+    # ndwi_TIFs_labeled = glob.glob(os.path.join(args.indir, 'NDWI', '*labeled.TIF'))
+    clip = ImageSequenceClip(ndwi_TIFs,fps=.20)
     clip.write_gif(os.path.join(args.indir, 'NDWI', 'final.gif'))
 
 
