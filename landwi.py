@@ -115,9 +115,9 @@ def main():
 
     lv1 = glob.glob(os.path.join(args.indir , '*'))
     # print(lv1)
-    print(lv1)
+    # print(lv1)
 
-    print('Cropping Lansat Images...')
+    print('Extraction complete, cropping Lansat images...')
     for folder in lv1:
 
         if os.path.isdir(folder):
@@ -167,6 +167,8 @@ def main():
 
     lv2 = glob.glob(os.path.join(args.indir, '*'))
 
+    print('Creating cloudy and clear directories for sorting...')
+
     if not os.path.exists(os.path.join(args.indir, 'cloudy')):
             os.makedirs(os.path.join(args.indir, 'cloudy'))
 
@@ -175,7 +177,9 @@ def main():
             
     if not os.path.exists(os.path.join(args.indir, 'NDWI')):
             os.makedirs(os.path.join(args.indir, 'NDWI'))
-            
+    
+    print('Scanning for cloudcover and running NDWI analysis...')
+
     for date_folder in lv2:
 
         if (os.path.isdir(date_folder)):
@@ -196,22 +200,22 @@ def main():
                     testing_mode = statistics.mode(testing_vals)
                     testing_average = statistics.mean(testing_vals)
 
-                    print('Testing mode: ',testing_mode)
-                    print('Testing Average: ', testing_average)
+                    # print('Testing mode: ',testing_mode)
+                    # print('Testing Average: ', testing_average)
                     if testing_mode == 0.0:
-                        print("Black image")
+                        # print("Black image")
 
                     if (len([1 for i in testing_vals if i > testing_mode]) >= len(testing_vals)*args.how_strict) or (testing_average > 35) or (testing_average < 10):
-                        print("Cloudy image")
+                        # print("Cloudy image")
 
-                        print(date)
+                        # print(date)
                         try:
                             shutil.move(os.path.join(args.indir, date), os.path.join(args.indir, 'cloudy'))
                         except:
                             continue
                     else:
-                        print("Clear image")
-                        print(date)
+                        # print("Clear image")
+                        # print(date)
 
                         # do NDWI Then move
 
@@ -251,7 +255,7 @@ def main():
 
     ndwi_TIFs = glob.glob(os.path.join(args.indir, 'NDWI', '*.TIF'))
 
-
+   
     for i in ndwi_TIFs:
         # Add coordinates
         img = gdal.Open(i)
@@ -271,7 +275,7 @@ def main():
     clip.write_gif(os.path.join(args.indir, 'NDWI', 'final.gif'))
 
 
-
+    print(f'Finished analysis, find NDWI outputs at {os.path.join(args.indir,'NDWI')}.')
 
 # --------------------------------------------------
 if __name__ == '__main__':
