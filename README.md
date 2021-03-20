@@ -22,6 +22,6 @@ The origional Landast 8 data cropped to your region of interest and sorted by cl
 ## Workflow for finding GPS bounding cordinates.
 
 1. Download the Earth Explorer Bulk Download Application 
-    * https://www.usgs.gov/media/images/earthexplorer-bulk-download-application-bda
+    * https://dds.cr.usgs.gov/bulk
 2. Use the Bulk Download Application and the Earth Eplorer Website in order to bulk download compressed Lansat-8 data in your region of intrest
     * add in screenshots of workflow
