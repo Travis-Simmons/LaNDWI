@@ -24,4 +24,14 @@ The origional Landast 8 data cropped to your region of interest and sorted by cl
 1. Download the Earth Explorer Bulk Download Application 
     * https://dds.cr.usgs.gov/bulk
 2. Use the Bulk Download Application and the Earth Eplorer Website in order to bulk download compressed Lansat-8 data in your region of intrest
-    * add in screenshots of workflow
+3. Uncompress one TAR
+4. Use QGIS to visualize one band
+5. Zoom into your ROI
+6. Use the QGIS 'Lat Lon Tools' plugin to copy the canvas coordinates
+7. Run the container using the canvas cordinates as the -b flag
+
+## Example Deployment
+singularity build landwi.img docker://travissimmons/landwi
+
+singularity run landwi.img {PATH TO COMPRESSED DATA} -b {PASTE CORNER COORDINATES}
+
