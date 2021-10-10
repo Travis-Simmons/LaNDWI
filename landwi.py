@@ -203,7 +203,7 @@ def main():
                     # print('Testing mode: ',testing_mode)
                     # print('Testing Average: ', testing_average)
                     if testing_mode == 0.0:
-                        # print("Black image")
+                        print("Black image")
 
                     if (len([1 for i in testing_vals if i > testing_mode]) >= len(testing_vals)*args.how_strict) or (testing_average > 35) or (testing_average < 10):
                         # print("Cloudy image")
@@ -275,7 +275,7 @@ def main():
     clip.write_gif(os.path.join(args.indir, 'NDWI', 'final.gif'))
 
 
-    print(f'Finished analysis, find NDWI outputs at {os.path.join(args.indir,'NDWI')}.')
+    print(f'Finished analysis, find NDWI outputs at {os.path.join(args.indir,"NDWI")}.')
 
 # --------------------------------------------------
 if __name__ == '__main__':
